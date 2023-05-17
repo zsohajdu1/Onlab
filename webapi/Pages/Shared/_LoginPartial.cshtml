@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using webapi.Model;
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+
+@{
+    string? returnUrl = null;
+    var query = ViewContext.HttpContext.Request.Query;
+    if (query.ContainsKey("returnUrl"))
+    {
+        returnUrl = query["returnUrl"];
+    }
+}
+
