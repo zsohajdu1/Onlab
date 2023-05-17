@@ -1,45 +1,45 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
-/anglularapp/dist
-/anglularapp/tmp
-/anglularapp/out-tsc
-/anglularapp/bazel-out
+/angularapp/dist
+/angularapp/tmp
+/angularapp/out-tsc
+/angularapp/bazel-out
 
 # Node
-/anglularapp/node_modules
-/anglularapp/npm-debug.log
-/anglularapp/yarn-error.log
+/angularapp/node_modules
+/angularapp/npm-debug.log
+/angularapp/yarn-error.log
 
 # IDEs and editors
-/anglularapp/.idea/
-/anglularapp/.project
-/anglularapp/.classpath
-/anglularapp/.c9/
+/angularapp/.idea/
+/angularapp/.project
+/angularapp/.classpath
+/angularapp/.c9/
 *.launch
-/anglularapp/.settings/
-/anglularapp/*.sublime-workspace
+/angularapp/.settings/
+/angularapp/*.sublime-workspace
 
 # Visual Studio Code
-/anglularapp/.vscode/*
+/angularapp/.vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-/anglularapp/.history/*
+/angularapp/.history/*
 
 # Miscellaneous
-/anglularapp/.angular/cache
-/anglularapp/.sass-cache/
-/anglularapp/connect.lock
-/anglularapp/coverage
-/anglularapp/libpeerconnection.log
-/anglularapp/testem.log
-/anglularapp/typings
+/angularapp/.angular/cache
+/angularapp/.sass-cache/
+/angularapp/connect.lock
+/angularapp/coverage
+/angularapp/libpeerconnection.log
+/angularapp/testem.log
+/angularapp/typings
 
 # System files
-/anglularapp/.DS_Store
-/anglularapp/Thumbs.db
+/angularapp/.DS_Store
+/angularapp/Thumbs.db
 
 # webapi
 /webapi/bin
