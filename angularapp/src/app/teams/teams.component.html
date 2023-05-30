@@ -1,40 +1,44 @@
 <div class="row" style="margin-left:2rem; margin-top: 2rem; margin-bottom: 5rem;">
-    <div class="input col-2">
-        <input type="text" class="form-control" placeholder="Team name" aria-label="TeamName">
+  <div class="input col-2">
+    <input type="text" class="form-control" placeholder="Team name" aria-label="TeamName">
+  </div>
+  <div class="dropdown col-1">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Game
+    </button>
+    <ul class="dropdown-menu">
+      <li><a class="dropdown-item" *ngFor="let GetGameDTO of games">{{GetGameDTO.name}}</a></li>
+    </ul>
+  </div>
+  <div class="dropdown col-2">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Status
+    </button>
+    <ul class="dropdown-menu">
+    </ul>
+  </div>
+</div>
+<ul class="list-group list-group-flush">
+  <li class="list-group-item row mb-1" *ngFor="let TeamListDTO of teams" style="margin-left:5rem;">
+    <div class="row mb-1">
+      <div class="col-1">
+        <div class="fs-6">{{TeamListDTO.game}}</div>
       </div>
-    <div class="dropdown col-1">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Game
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" *ngFor="let GetGameDTO of games">{{GetGameDTO.name}}</a></li>
-        </ul>
+      <div class="col-1">
+        <div class="fs-6">{{TeamListDTO.name}}</div>
+      </div>
+      <div class="col-1" *ngIf="TeamListDTO.status == 0">
+        <div class="fs-6">LFT</div>
+      </div>
+      <div class="col-1" *ngIf="TeamListDTO.status == 1">
+        <div class="fs-6">FULL</div>
+      </div>
+      <div class="col-1">
+        <div class="fs-6">{{TeamListDTO.memberCount}} / 5</div>
+      </div>
+      <div class="col-1" *ngIf="TeamListDTO.status == 0">
+        <button type="button" class="btn btn-primary">APPLY</button>
+      </div>
     </div>
-    <div class="dropdown col-2">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Status
-        </button> 
-        <ul class="dropdown-menu">
-        </ul>
-    </div>
-</div>
-<div class="row mb-1" *ngFor="let TeamListDTO of teams" style="margin-left:5rem; margin-top: 2rem; margin-bottom: 2rem;">
-    <div class="col-1">
-      <div class="fs-6">{{TeamListDTO.game}}</div>
-    </div>
-    <div class="col-1">
-      <div class="fs-6">{{TeamListDTO.name}}</div>
-    </div>
-    <div class="col-1" *ngIf="TeamListDTO.status == 0">
-      <div class="fs-6">LFT</div>
-    </div>
-    <div class="col-1" *ngIf="TeamListDTO.status == 1">
-      <div class="fs-6">FULL</div>
-    </div>
-    <div class="col-1">
-      <div class="fs-6">{{TeamListDTO.memberCount}} / 5</div>
-    </div>
-    <div class="col-1" *ngIf="TeamListDTO.status == 0">
-      <button type="button" class="btn btn-primary">APPLY</button>
-    </div>
-</div>
+  </li>
+</ul>

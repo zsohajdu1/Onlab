@@ -4,10 +4,10 @@ import { Router} from '@angular/router';
 import { environment } from '../../environments/environment';
 
 @Component({
-    selector: 'app-teams',
-    templateUrl: './teams.component.html'
+    selector: 'app-my-teams',
+    templateUrl: './my-teams.component.html'
 })
-export class TeamsComponent implements OnInit{
+export class MyTeamsComponent implements OnInit{
     teams: TeamListDTO[] = [];
     games: GetGameDTO[] = [];
     private client: Client;

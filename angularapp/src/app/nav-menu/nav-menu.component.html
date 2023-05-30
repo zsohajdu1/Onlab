@@ -10,13 +10,13 @@
             <a class="nav-link" [routerLink]="['teams']">Teams</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link ">My Teams</a>
+            <a class="nav-link" [routerLink]="['myteams']">My Teams</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link">Tournaments</a>
+            <a class="nav-link" [routerLink]="['tournaments']">Tournaments</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link">My Tournaments</a>
+            <a class="nav-link" [routerLink]="['mytournaments']">My Tournaments</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" *ngIf="(isAuthenticated | async) !== true" [routerLink]="['/authentication/register']">Register</a>

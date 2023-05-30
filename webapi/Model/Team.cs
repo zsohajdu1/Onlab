@@ -8,6 +8,7 @@
         public Game TeamGame { get; set; }
         public string? LftDescription { get; set; }
         public ICollection<User>? Members { get; set; }
+        //public User Captain { get; set; }
         public ICollection<Tournament>? Tournaments { get; set; }
         public ICollection<Match>? Matches { get; set; }
     }

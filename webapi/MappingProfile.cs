@@ -17,12 +17,20 @@ namespace webapi
             CreateMap<TeamListDTO, Team>();
             CreateMap<Team, CreateTeamDTO>();
             CreateMap<CreateTeamDTO, Team>();
+            CreateMap<Team, TeamDetailDTO>();
+            CreateMap<TeamDetailDTO, Team>();
+
             CreateMap<Game, CreateGameDTO>();
             CreateMap<CreateGameDTO, Game>();
             CreateMap<Game, GetGameDTO>();
             CreateMap<GetGameDTO, Game>();
 
-            
+            CreateMap<Tournament, TournamentListDTO>();
+            CreateMap<TournamentListDTO, Tournament>();
+            CreateMap<Tournament, CreateTournamentDTO>();
+            CreateMap<CreateTournamentDTO, Tournament>();
+            CreateMap<Tournament, TournamentDetailDTO>();
+            CreateMap<TournamentDetailDTO, Tournament>();
         }
     }
 }

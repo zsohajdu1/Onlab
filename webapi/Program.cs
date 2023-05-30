@@ -31,6 +31,7 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<ITournamentService, TournamentService>();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {

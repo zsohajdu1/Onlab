@@ -24,11 +24,28 @@ namespace webapi.Controllers
             return _teamService.GetAllTeams();
         }
 
+        [HttpGet]
+        [Route("my")]
+        public List<TeamListDTO> GetMyTeams()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _teamService.GetMyTeams(userId);
+        }
+
         [HttpPost]
         [Route("create")]
         public void CreateTeam(CreateTeamDTO createTeamDTO)
         {
-            _teamService.CreateTeam(createTeamDTO);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _teamService.CreateTeam(createTeamDTO, userId);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public TeamDetailDTO GetTeam()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return _teamService.GetTeam(userId);
         }
     }
 }

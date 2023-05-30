@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using webapi.Context;
 using webapi.DTO;
 using webapi.Model;
@@ -26,7 +27,16 @@ namespace webapi.Services
 
         public List<GetGameDTO> GetGames()
         {
-            return mapper.Map<List<GetGameDTO>>(dB.Games);
+            List<GetGameDTO> result = new();
+            var games = dB.Games.Include(g => g.Tournaments).ToList();
+            foreach (var game in games)
+            {
+                var convertedGame = mapper.Map<GetGameDTO>(game);
+                if (game.Tournaments == null) convertedGame.TournamentCount = 0;
+                else convertedGame.TournamentCount = game.Tournaments.Count;
+                result.Add(convertedGame);
+            }
+            return result;
         }
     }
 }
