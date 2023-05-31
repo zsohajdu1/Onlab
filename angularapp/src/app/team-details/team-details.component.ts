@@ -21,7 +21,6 @@ export class TeamDetailsComponent implements OnInit {
     ngOnInit(): void {
         this.activatedRoute.params.subscribe(params => {
             this.id = params['id'];
-            console.log(this.id);
         });
         this.loadData();
     }
@@ -81,13 +80,13 @@ export class TeamDetailsComponent implements OnInit {
     }
 
     accept(applicationId: number | undefined) {
-        this.client.accept(this.team.id!, applicationId!).subscribe(res => {
+        this.client.acceptPATCH(this.team.id!, applicationId!).subscribe(res => {
             this.loadData();
         })
     }
 
     deny(applicationId: number | undefined) {
-        this.client.deny(this.team.id!, applicationId!).subscribe(res => {
+        this.client.denyPATCH(this.team.id!, applicationId!).subscribe(res => {
             this.loadData();
         })
     }

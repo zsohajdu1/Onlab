@@ -4,6 +4,7 @@ namespace webapi.DTO
 {
     public class TournamentListDTO
     {
+        public int Id { get; set; }
         public string Game { get; set; }
         public string Name { get; set; }
         public TournamentStatus Status { get; set; }

@@ -12,6 +12,13 @@ namespace webapi.Controllers
     {
         private readonly ITournamentService _tournamentService;
 
+
+        /*
+        public void AcceptApplication(string userId, int tournamentId, int applicationId);
+        public void DenyApplication(string userId, int tournamentId, int applicationId);
+        public List<TournamentApplicationDTO> GetApplications(int tournamentId);
+        public void RemoveTeam(int tournamentId, int teamId);
+        public void ChangeTournament(string userId, TournamentDetailDTO tournament);*/
         public TournamentController(ITournamentService tournamentService)
         {
             _tournamentService = tournamentService;
@@ -34,10 +41,10 @@ namespace webapi.Controllers
 
         [HttpPost]
         [Route("create")]
-        public void CreateTournament(CreateTournamentDTO createTournamentDTO)
+        public int CreateTournament(CreateTournamentDTO createTournamentDTO)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _tournamentService.CreateTournament(createTournamentDTO, userId);
+            return _tournamentService.CreateTournament(createTournamentDTO, userId);
         }
 
         [HttpGet]
@@ -48,11 +55,59 @@ namespace webapi.Controllers
             return _tournamentService.GetTournament(userId, id);
         }
 
-        [HttpPatch]
+        [HttpPost]
         [Route("{id}/start")]
         public void StartTournament (int id)
         {
             _tournamentService.StartTournament(id);
+        }
+
+        [HttpPost]
+        [Route("matches/{matchId}/{winnerId}")]
+        public void MatchWinner(int matchId, int winnerId)
+        {
+            _tournamentService.MatchWinner(matchId, winnerId);
+        }
+
+        [HttpPost]
+        [Route("{tournamentId}/apply/{teamId}")]
+        public void ApplyTournament(int teamId, int tournamentId)
+        {
+            _tournamentService.ApplyTournament(teamId, tournamentId);
+        }
+
+        [HttpPost]
+        [Route("{tournamentId}/accept/{applicationId}")]
+        public void AcceptApplication(int tournamentId, int applicationId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _tournamentService.AcceptApplication(userId, tournamentId, applicationId);
+        }
+        [HttpPost]
+        [Route("{tournamentId}/deny/{applicationId}")]
+        public void DenyApplication(int tournamentId, int applicationId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _tournamentService.DenyApplication(userId, tournamentId, applicationId);
+        }
+        [HttpGet]
+        [Route("{tournamentId}/applications")]
+        public List<TournamentApplicationDTO> GetApplications(int tournamentId)
+        {
+            return _tournamentService.GetApplications(tournamentId);
+        }
+        [HttpPatch]
+        [Route("{tournamentId}/remove/{teamId}")]
+        public void RemoveTeam(int tournamentId, int teamId)
+        {
+            _tournamentService.RemoveTeam(tournamentId, teamId);
+        }
+        [HttpPatch]
+        [Route("change")]
+        public void ChangeTournament(TournamentDetailDTO tournament)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            _tournamentService.ChangeTournament(userId, tournament);
         }
     }
 }

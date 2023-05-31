@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { AuthorizeService } from '../api-authorization/authorize.service';
-import { Client, GetGameDTO, TeamListDTO } from '../client';
+import { Client, GetGameDTO, TeamListDTO, TournamentListDTO } from '../client';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -14,6 +14,7 @@ export class HomeComponent {
     public userName?: Observable<string | null | undefined>;
     games: GetGameDTO[] = [];
     teams: TeamListDTO[] = [];
+    tournaments: TournamentListDTO[] = [];
 
     constructor(private authorizeService: AuthorizeService, private client: Client) {
         client.games().subscribe(res => {
@@ -23,6 +24,9 @@ export class HomeComponent {
         );
         client.my(undefined, undefined, undefined).subscribe(res => {
             this.teams = res;
+        })
+        client.my2(undefined, undefined, undefined).subscribe(res => {
+            this.tournaments = res;
         })
     }
 

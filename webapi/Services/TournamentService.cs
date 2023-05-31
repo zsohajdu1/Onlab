@@ -68,15 +68,17 @@ namespace webapi.Services
             return convertedTournaments;
         }
 
-        public void CreateTournament(CreateTournamentDTO createTournamentDTO, string userId)
+        public int CreateTournament(CreateTournamentDTO createTournamentDTO, string userId)
         {
 
             var convertedTournament = mapper.Map<Tournament>(createTournamentDTO);
             convertedTournament.TournamentGame = dB.Games.FirstOrDefault(g => g.Id.Equals(createTournamentDTO.GameId));
             convertedTournament.Status = TournamentStatus.UPCOMING;
             convertedTournament.Format = new Elimination();
+            convertedTournament.Owner = dB.Users.FirstOrDefault(u => u.Id == userId);
             dB.Add(convertedTournament);
             dB.SaveChanges();
+            return convertedTournament.Id;
         }
 
         public TournamentDetailDTO GetTournament(string userId, int id)
@@ -105,6 +107,8 @@ namespace webapi.Services
             convertedTournament.GameId = tournament.TournamentGame.Id;
             convertedTournament.GameIcon = tournament.TournamentGame.Icon;
 
+            convertedTournament.IsOwner = tournament.Owner.Id == userId;
+
             convertedTournament.TeamsId = new List<int>();
             convertedTournament.TeamsName = new List<string>();
             foreach (var team in tournament.Teams)
@@ -124,8 +128,16 @@ namespace webapi.Services
                     convertedMatch.TeamsId.Add(team.Id);
                     convertedMatch.TeamsName.Add(team.Name);
                 }
-                convertedMatch.WinnerName = match.Winner.Name;
-                convertedMatch.WinnerId = match.Winner.Id;
+                if (match.Winner != null)
+                {
+
+                    convertedMatch.WinnerName = match.Winner.Name;
+                    convertedMatch.WinnerId = match.Winner.Id;
+                }
+                else
+                {
+                    convertedMatch.WinnerName = "";
+                }
                 convertedMatch.TournamentId = match.TournamentOfMatch.Id;
             }
             return convertedTournament;
@@ -137,6 +149,11 @@ namespace webapi.Services
                 .Include(t => t.Teams)
                 .Include(t => t.Format)
                 .FirstOrDefault(t => t.Id == id);
+
+            var format = dB.TournamentFormats
+                .Include(f => f.Matches)
+                .Include(f => f.Tournament)
+                .FirstOrDefault(f => f.Tournament.Id == id);
             var teamsCount = tournament.Teams.Count;
             double verticalDepthDouble = Math.Log(teamsCount, 2);
             int verticalDepth = (int)Math.Ceiling(verticalDepthDouble);
@@ -154,7 +171,7 @@ namespace webapi.Services
                     double horizontal = i / 2;
                     match.HorizontalDepth = (int)Math.Floor(horizontal);
                     match.VerticalDepth = verticalDepth - 1;
-                    tournament.Format.Matches.Add(match);
+                    format.Matches.Add(match);
                     dB.Add(match);
                 }
                 for (int i = 0; i< verticalDepth - 1; i++)
@@ -168,12 +185,13 @@ namespace webapi.Services
                         double horizontal = j;
                         match.HorizontalDepth = (int)Math.Floor(horizontal);
                         match.VerticalDepth = i;
-                        tournament.Format.Matches.Add(match);
+                        format.Matches.Add(match);
                         dB.Add(match);
                     }
                 }
                 tournament.Status = TournamentStatus.INPROGRESS;
                 dB.Update(tournament);
+                dB.Update(format);
                 dB.SaveChanges();
             }
             else
@@ -314,13 +332,27 @@ namespace webapi.Services
         public void RemoveTeam(int tournamentId, int teamId)
         {
             var team = dB.Teams.FirstOrDefault(t => t.Id == teamId);
-            var tournament = dB.Tournaments.FirstOrDefault(t => t.Id == tournamentId);
+            var tournament = dB.Tournaments.Include(t=> t.Teams).FirstOrDefault(t => t.Id == tournamentId);
             if (tournament.Teams.Contains(team))
             {
                 tournament.Teams.Remove(team);
                 dB.Update(tournament);
                 dB.SaveChanges();
             }
+        }
+
+
+
+        public void ChangeTournament(string userId, TournamentDetailDTO tournament)
+        {
+            var changedTournament = dB.Tournaments.Include(t => t.Owner).FirstOrDefault(t => t.Id == tournament.Id);
+            if (tournament.IsOwner)
+            {
+                changedTournament.Name = tournament.Name;
+                changedTournament.MaxParticipants = tournament.MaxParticipants;
+            }
+            dB.Update(changedTournament);
+            dB.SaveChanges();
         }
     }
 }

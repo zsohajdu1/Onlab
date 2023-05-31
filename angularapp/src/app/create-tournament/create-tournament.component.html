@@ -1,0 +1,33 @@
+<div style="margin-left:2rem;">
+    <div class="row" style="margin-top: 2rem; margin-bottom: 2rem;">
+        <div class="fs-3">
+            Create Tournament
+        </div>
+    </div>
+    <div class="mb-3 col-4">
+        <label for="tournamentName" class="form-label">Tournament Name</label>
+        <input [(ngModel)]="name" type="text" class="form-control" id="tournamentName">
+    </div>
+
+    <div class="dropdown col-2 mb-3">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{viewGame}}
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" *ngFor="let game of games" (click)="changeGameId(game)">{{game.name}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="mb-3 col-4">
+        <label for="tournamentName" class="form-label">Max Participants</label>
+        <input [(ngModel)]="participants" type="number" class="form-control" id="tournamentName">
+    </div>
+
+    <div class="mb-3 col-4">
+        <button (click)="createTournament()" class="btn btn-primary">CREATE TOURNAMENT</button>
+    </div>
+
+    <div *ngIf="alert" class="col-4 alert alert-danger" role="alert">
+        {{alertMessage}}
+    </div>
+</div>

@@ -1,1 +1,56 @@
-Tournaments Component
+<div class="row" style="margin-left:2rem; margin-top: 2rem; margin-bottom: 5rem;">
+    <div class="input col-2">
+      <input [(ngModel)]="name" type="text" class="form-control" placeholder="Tournament name" aria-label="TournamentName">
+    </div>
+    <div class="input col-2">
+        <input [(ngModel)]="organizer" type="text" class="form-control" placeholder="Organizer name" aria-label="TournamentName">
+      </div>
+    <div class="dropdown col-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{viewGame}}
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" *ngFor="let game of games" (click)="changeGameId(game)">{{game.name}}</a></li>
+      </ul>
+    </div>
+    <div class="dropdown col-2">
+      <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        {{viewStatus}}
+      </button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" (click)="changeStatus(0)">Upcoming</a></li>
+        <li><a class="dropdown-item" (click)="changeStatus(1)">In Progress</a></li>
+        <li><a class="dropdown-item" (click)="changeStatus(2)">Completed</a></li>
+      </ul>
+    </div>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item row mb-1" [routerLink]="['/tournaments', TournamentListDTO.id]" *ngFor="let TournamentListDTO of tournaments" style="margin-left:5rem;">
+      <div class="row mb-1">
+        <div class="col-1">
+          <img class="" id="gameIcon" alt="avatar1" style=" max-width: 100%;
+          height: auto;" src="{{TournamentListDTO.gameIcon}}" />
+        </div>
+        <div class="col-1">
+          <div class="fs-6">{{TournamentListDTO.name}}</div>
+        </div>
+        <div class="col-1" *ngIf="TournamentListDTO.status == 0">
+          <div class="fs-6">Upcoming</div>
+        </div>
+        <div class="col-1" *ngIf="TournamentListDTO.status == 1">
+          <div class="fs-6">In Progress</div>
+        </div>
+        <div class="col-1" *ngIf="TournamentListDTO.status == 2">
+          <div class="fs-6">Completed</div>
+        </div>
+        <div class="col-1">
+          <div class="fs-6">
+            <div class="fs-6">{{TournamentListDTO.participants}} / {{TournamentListDTO.maxParticipants}}</div>
+          </div>
+        </div>
+        <div class="col-1">
+          <div class="fs-6">{{TournamentListDTO.organizer}}</div>
+        </div>
+      </div>
+    </li>
+  </ul>

@@ -1,1 +1,58 @@
-Tournament Details Component
+<div style="margin-left: 2rem">
+    <div class="row" style="margin-top: 2rem; margin-bottom: 2rem">
+        <img class="col-2" id="gameIcon" alt="avatar1" src="{{tournament.gameIcon}}" />
+        <div class="fs-3 col-2">
+            {{tournament.name}}
+        </div>
+        <div *ngIf="tournament.status==0" class="fs-3 col-2">
+            Upcoming
+        </div>
+        <div *ngIf="tournament.status==1" class="fs-3 col-2">
+            Inprogress
+        </div>
+        <div *ngIf="tournament.status==2" class="fs-3 col-2">
+            Completed
+        </div>
+    </div>
+    <div *ngIf="tournament.status==0" class="row">
+        <div class="col-6">
+            <div class="fs-4">
+                Teams
+            </div>
+            <div class="fs-5">
+                Accepted
+            </div>
+            <div style="margin-left: 2rem" class="row" *ngFor="let team of tournament.teamsName; let i = index">
+                {{team}}
+                <button *ngIf="tournament.isOwner" (click)="remove(tournament.teamsId![i])" type="button" class="btn btn-danger col-1"
+                    style="margin-left: 2rem">KICK</button>
+            </div>
+            <div class="fs-5">
+                Pending
+            </div>
+            <div style="margin-left: 2rem" class="row" *ngFor="let team of applications; let i = index">
+                {{team.teamName}}
+                <button *ngIf="tournament.isOwner" (click)="accept(team.id!)" type="button" class="btn btn-success col-1"
+                    style="margin-left: 2rem">ACCEPT</button>
+                <button *ngIf="tournament.isOwner" (click)="deny(team.id!)" type="button" class="btn btn-danger col-1"
+                    style="margin-left: 2rem">DENY</button>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="fs-4">
+                Settings
+            </div>
+            <div *ngIf="tournament.isOwner">
+
+            </div>
+            <div class="fs-5" *ngIf="!tournament.isOwner">
+                <div>Max participants: {{tournament.maxParticipants}}</div>
+                <div>Game: {{tournament.gameName}}</div>
+                <div>Join with:</div>
+                <div class="text-info" (click)="join(team.id!)" *ngFor="let team of teams">
+                    {{team.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

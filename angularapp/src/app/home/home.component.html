@@ -3,7 +3,7 @@
         <div class="fs-3">
             Top Games
         </div>
-        <div [routerLink]="['/tournaments', game.id]" class="fs-4" *ngFor="let game of games" style="margin-top: 1rem;">
+        <div class="fs-4" *ngFor="let game of games" style="margin-top: 1rem;">
             <img class="" id="gameIcon" alt="avatar1" src="{{game.icon}}" />
             {{game.tournamentCount}} tournaments
         </div>

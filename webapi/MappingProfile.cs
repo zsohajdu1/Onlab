@@ -37,6 +37,9 @@ namespace webapi
 
             CreateMap<TournamentApplication, TournamentApplicationDTO>();
             CreateMap<TournamentApplicationDTO, TournamentApplication>();
+
+            CreateMap<Match, MatchDTO>();
+            CreateMap<MatchDTO, Match>();
         }
     }
 }

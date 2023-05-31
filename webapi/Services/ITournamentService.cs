@@ -5,7 +5,7 @@ namespace webapi.Services
 {
     public interface ITournamentService
     {
-        public void CreateTournament(CreateTournamentDTO createTournamentDTO, string userId);
+        public int CreateTournament(CreateTournamentDTO createTournamentDTO, string userId);
         public List<TournamentListDTO> GetAllTournaments(string? organizerName, string? name, TournamentStatus? status, int? gameId);
         public List<TournamentListDTO> GetMyTournaments(string id, string? name, TournamentStatus? status, int? gameId);
         public TournamentDetailDTO GetTournament(string userId, int id);
@@ -16,5 +16,6 @@ namespace webapi.Services
         public void DenyApplication(string userId, int tournamentId, int applicationId);
         public List<TournamentApplicationDTO> GetApplications(int tournamentId);
         public void RemoveTeam(int tournamentId, int teamId);
+        public void ChangeTournament(string userId, TournamentDetailDTO tournament);
     }
 }
