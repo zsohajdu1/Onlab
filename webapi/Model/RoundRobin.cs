@@ -2,6 +2,6 @@
 {
     public class RoundRobin : TournamentFormat
     {
-        public ICollection<Match>? Matches { get; set; }
+        
     }
 }

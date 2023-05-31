@@ -109,7 +109,6 @@ export class AuthorizeService {
 
   public async completeSignIn(url: string): Promise<IAuthenticationResult> {
     try {
-      console.log("a");
       await this.ensureUserManagerInitialized();
       const user = await this.userManager!.signinCallback(url);
       this.userSubject.next(user && user.profile);

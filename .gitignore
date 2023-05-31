@@ -44,3 +44,4 @@
 # webapi
 /webapi/bin
 /webapi/obj
+/webapi/Migrations

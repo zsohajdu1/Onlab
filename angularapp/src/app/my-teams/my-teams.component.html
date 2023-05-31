@@ -1,33 +1,37 @@
 <div class="row" style="margin-left:2rem; margin-top: 2rem; margin-bottom: 5rem;">
     <div class="input col-2">
-        <input type="text" class="form-control" placeholder="Team name" aria-label="TeamName">
+        <input [(ngModel)]="name" type="text" class="form-control" placeholder="Team name" aria-label="TeamName">
     </div>
-    <div class="dropdown col-1">
+    <div class="dropdown col-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Game
+            {{viewGame}}
         </button>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" *ngFor="let GetGameDTO of games">{{GetGameDTO.name}}</a></li>
+            <li><a class="dropdown-item" *ngFor="let game of games" (click)="changeGameId(game)">{{game.name}}</a>
+            </li>
         </ul>
     </div>
     <div class="dropdown col-2">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Status
+            {{viewStatus}}
         </button>
         <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="changeStatus(0)">LFT</a></li>
+            <li><a class="dropdown-item" (click)="changeStatus(1)">FULL</a></li>
         </ul>
     </div>
     <div class="col-3">
-        <button class="btn btn-primary" type="button">
+        <button [routerLink]="['/teams/create']" class="btn btn-primary" type="button">
             Create new team
         </button>
     </div>
 </div>
 <ul class="list-group list-group-flush">
-    <li class="list-group-item row mb-1" *ngFor="let TeamListDTO of teams" style="margin-left:5rem;">
+    <li class="list-group-item row mb-1" [routerLink]="['/teams', TeamListDTO.id]" *ngFor="let TeamListDTO of teams" style="margin-left:5rem;">
         <div class="row mb-1">
             <div class="col-1">
-                <div class="fs-6">{{TeamListDTO.game}}</div>
+                <img class="" id="gameIcon" alt="avatar1" style=" max-width: 100%;
+                height: auto;" src="{{TeamListDTO.gameIcon}}" />
             </div>
             <div class="col-1">
                 <div class="fs-6">{{TeamListDTO.name}}</div>
@@ -39,7 +43,7 @@
                 <div class="fs-6">FULL</div>
             </div>
             <div class="col-1">
-                <div class="fs-6">{{TeamListDTO.memberCount}} / 5</div>
+                <div class="fs-6">{{TeamListDTO.memberCount}} / {{TeamListDTO.gameMember}}</div>
             </div>
         </div>
     </li>

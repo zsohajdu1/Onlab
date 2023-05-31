@@ -1,10 +1,10 @@
 using AutoMapper;
+using Duende.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.CookiePolicy;
 using System.Security.Claims;
 using webapi;
 using webapi.Context;
@@ -26,12 +26,12 @@ builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfi
 builder.Services.AddIdentityServer()
     .AddApiAuthorization<User, OnlabProjectContext>();
 
-builder.Services.AddAuthentication()
-    .AddIdentityServerJwt();
+builder.Services.AddAuthentication().AddIdentityServerJwt();
 
 builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<ITournamentService, TournamentService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var mapperConfig = new MapperConfiguration(mc =>
 {
@@ -72,7 +72,10 @@ else
 
 app.UseSwagger();
 
-app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
 
 app.UseHttpsRedirection();
 
@@ -80,20 +83,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();
-
 app.UseIdentityServer();
 
 app.UseAuthorization();
 
+app.UseAuthentication();
+
 app.MapControllers();
-
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
 
 app.MapControllerRoute(
     name: "default",

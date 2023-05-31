@@ -1,1 +1,76 @@
-Team Details Component
+<div style="margin-left: 2rem">
+    <div class="row" style="margin-top: 2rem; margin-bottom: 2rem">
+        <img class="col-2" id="gameIcon" alt="avatar1" src="{{team.gameIcon}}" />
+        <div class="fs-3 col-2">
+            {{team.name}}
+        </div>
+        <div *ngIf="team.status==0" class="fs-3 col-2">
+            LFT
+        </div>
+        <div *ngIf="team.status==1" class="fs-3 col-2">
+            FULL
+        </div>
+        <div *ngIf="!isPlayer && team.status==0" class="col-2">
+            <button (click)="apply()" type="button" class="btn btn-primary btn-lg">APPLY</button>
+        </div>
+        <div *ngIf="isPlayer && !isCaptain" class="col-2">
+            <button (click)="leave()" type="button" class="btn btn-danger btn-lg">LEAVE</button>
+        </div>
+    </div>
+    <div *ngIf="isCaptain" class="fs-4">
+        Settings
+        <div class="fs-5">
+            Change name
+        </div>
+        <div class="col-3">
+            <input [(ngModel)]="newName" class="form-control" placeholder="Change name" id="teamName">
+        </div>
+        <div class="fs-5">
+            Change status
+        </div>
+        <div class="dropdown col-3">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{viewStatus}}
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" (click)="changeStatus(0)">LFT</a></li>
+                <li><a class="dropdown-item" (click)="changeStatus(1)">FULL</a></li>
+            </ul>
+        </div>
+        <div class="fs-5">
+            Change LFT Description
+        </div>
+        <div class="col-3">
+            <textarea [(ngModel)]="team.lftDescription" class="form-control" id="teamDescription" rows="3"></textarea>
+        </div>
+        <div>     
+            <button (click)="save()" class="btn btn-success" type="button">
+                SAVE CHANGES
+            </button>
+        </div>
+    </div>
+    <div class="fs-4">
+        Members
+    </div>
+    <div class="row fs-4" style="margin-left: 2rem" *ngFor="let member of team.membersName; let i = index">
+        {{member}}
+        <button (click)="kick(team.membersId![i])" *ngIf="isCaptain && member!=captainName" type="button" class="btn btn-danger col-1"
+            style="margin-left: 2rem">KICK</button>
+    </div>
+    <div *ngIf="!isPlayer && team.status == 0" class="fs-4">
+        LFT Description
+        <div class="col-3">
+            <textarea [(ngModel)]="team.lftDescription" readonly class="form-control" id="teamDescription" rows="3"></textarea>
+        </div>
+    </div>
+    <div *ngIf="isCaptain" class="fs-4">
+        Appliants
+        <div class="row fs-4" style="margin-left: 2rem" *ngFor="let appliant of applications">
+            {{appliant.userName}}
+            <button (click)="accept(appliant.id)" type="button" class="btn btn-success col-1"
+                style="margin-left: 2rem">ACCEPT</button>
+            <button (click)="deny(appliant.id)" type="button" class="btn btn-danger col-1"
+                style="margin-left: 2rem">DENY</button>
+        </div>
+    </div>
+</div>

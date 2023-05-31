@@ -44,6 +44,14 @@ namespace webapi.Context
             var eliminations = modelBuilder.Entity<Elimination>();
 
             var games = modelBuilder.Entity<Game>();
+            games.HasData(new[]
+            {
+                new Game() {Id = 1, Name = "CSGO", TeamSize = 5, Icon = "CSGO.jpg"},
+                new Game() {Id = 2, Name = "LOL", TeamSize = 5, Icon = "LOL.jpg"},
+                new Game() {Id = 3, Name = "DOTA2", TeamSize = 5, Icon = "DOTA2.jpg"},
+                new Game() {Id = 4, Name = "Valorant", TeamSize = 5, Icon = "Valorant.jpg"},
+                new Game() {Id = 5, Name = "Rocket League", TeamSize = 3, Icon = "RocketLeague.jpg"}
+            }) ;
 
             var matches = modelBuilder.Entity<Match>();
             matches.HasOne(m => m.Winner)
@@ -56,10 +64,34 @@ namespace webapi.Context
             teams.HasOne(t => t.TeamGame)
                 .WithMany(g => g.Teams)
                 .OnDelete(DeleteBehavior.ClientCascade);
+            teams.HasOne(t => t.Captain)
+                .WithMany(u => u.OwnedTeams)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            teams.HasMany(t => t.Members)
+                .WithMany(u => u.Teams);
 
             var tournaments = modelBuilder.Entity<Tournament>();
+            tournaments.HasOne(t => t.Owner)
+                .WithMany(u => u.Tournaments)
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             var users = modelBuilder.Entity<User>();
+
+            var memberApplications = modelBuilder.Entity<MemberApplication>();
+            memberApplications.HasOne(ma => ma.User)
+                .WithMany(u => u.MemberApplications)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            memberApplications.HasOne(ma => ma.Team)
+                .WithMany(t => t.MemberApplications)
+                .OnDelete(DeleteBehavior.ClientCascade);
+
+            var tournamentApplications = modelBuilder.Entity<TournamentApplication>();
+            tournamentApplications.HasOne(ta => ta.Tournament)
+                .WithMany(t => t.TournamentApplications)
+                .OnDelete(DeleteBehavior.ClientCascade);
+            tournamentApplications.HasOne(ta => ta.Team)
+                .WithMany(t => t.TournamentApplications)
+                .OnDelete(DeleteBehavior.ClientCascade);
 
             base.OnModelCreating(modelBuilder);
 
@@ -72,5 +104,7 @@ namespace webapi.Context
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<TournamentFormat> TournamentFormats { get; set; }
+        public DbSet<MemberApplication> MemberApplications { get; set; }
+        public DbSet<TournamentApplication> TournamentApplications { get; set; }
     }
 }

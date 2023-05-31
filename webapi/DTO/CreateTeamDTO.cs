@@ -4,5 +4,6 @@
     {
         public int TeamGameId { get; set; }
         public string Name { get; set; }
+        public string LftDescription { get; set; }
     }
 }

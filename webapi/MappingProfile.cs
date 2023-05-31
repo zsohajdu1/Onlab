@@ -31,6 +31,12 @@ namespace webapi
             CreateMap<CreateTournamentDTO, Tournament>();
             CreateMap<Tournament, TournamentDetailDTO>();
             CreateMap<TournamentDetailDTO, Tournament>();
+
+            CreateMap<MemberApplication, MemberApplicationDTO>();
+            CreateMap<MemberApplicationDTO, MemberApplication> ();
+
+            CreateMap<TournamentApplication, TournamentApplicationDTO>();
+            CreateMap<TournamentApplicationDTO, TournamentApplication>();
         }
     }
 }
