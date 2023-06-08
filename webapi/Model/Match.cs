@@ -10,7 +10,7 @@
         public int? HorizontalDepth { get; set; }
         public int? VerticalDepth { get; set; }
         public ICollection<Team>? Teams { get; set; }
-        public Tournament TournamentOfMatch { get; set; }
+        public Tournament Tournament { get; set; }
         public DateTime? Date { get; set; }
     }
 }

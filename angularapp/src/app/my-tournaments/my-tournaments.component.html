@@ -21,6 +21,11 @@
             <li><a class="dropdown-item" (click)="changeStatus(2)">Completed</a></li>
         </ul>
     </div>
+    <div class="col-3">
+        <button [routerLink]="['/tournaments/create']" class="btn btn-primary" type="button">
+            Create new tournament
+        </button>
+    </div>
 </div>
 <ul class="list-group list-group-flush">
     <li class="list-group-item row mb-1" [routerLink]="['/tournaments', TournamentListDTO.id]"
@@ -39,7 +44,7 @@
             <div class="col-1" *ngIf="TournamentListDTO.status == 1">
                 <div class="fs-6">In Progress</div>
             </div>
-            <div class="col-1" *ngIf="TournamentListDTO.status == 1">
+            <div class="col-1" *ngIf="TournamentListDTO.status == 2">
                 <div class="fs-6">Completed</div>
             </div>
             <div class="col-1">

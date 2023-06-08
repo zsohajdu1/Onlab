@@ -24,14 +24,16 @@ export class HomeComponent {
         );
         client.my(undefined, undefined, undefined).subscribe(res => {
             this.teams = res;
+            this.teams.forEach(t => t.gameIcon = "https://localhost:7010/" + t.gameIcon)
         })
         client.my2(undefined, undefined, undefined).subscribe(res => {
             this.tournaments = res;
+            this.tournaments.forEach(t => t.gameIcon = "https://localhost:7010/" + t.gameIcon)
         })
     }
 
     ngOnInit() {
         this.isAuthenticated = this.authorizeService.isAuthenticated();
-        this.userName = this.authorizeService.getUser().pipe(map(u => u && u.name));
+        this.userName = this.authorizeService.getUser().pipe(map(u => u?.name));
     }
 }

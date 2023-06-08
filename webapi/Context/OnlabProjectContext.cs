@@ -30,19 +30,6 @@ namespace webapi.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var tournamentformats = modelBuilder.Entity<TournamentFormat>();
-            tournamentformats.ToTable("TournamentFormats")
-                .HasDiscriminator<int>("FormatType")
-                .HasValue<RoundRobin>(1)
-                .HasValue<Elimination>(2);
-
-            tournamentformats.HasOne(tf => tf.Tournament)
-                .WithOne(t => t.Format)
-                .HasForeignKey<Tournament>(t => t.Id)
-                .OnDelete(DeleteBehavior.ClientCascade);
-
-            var eliminations = modelBuilder.Entity<Elimination>();
-
             var games = modelBuilder.Entity<Game>();
             games.HasData(new[]
             {
@@ -57,8 +44,10 @@ namespace webapi.Context
             matches.HasOne(m => m.Winner)
                 .WithMany()
                 .OnDelete(DeleteBehavior.ClientCascade);
+            matches.HasOne(m => m.Tournament)
+                .WithMany(t => t.Matches)
+                .OnDelete(DeleteBehavior.ClientCascade);
 
-            var roundrobins = modelBuilder.Entity<RoundRobin>();
 
             var teams = modelBuilder.Entity<Team>();
             teams.HasOne(t => t.TeamGame)
@@ -96,14 +85,11 @@ namespace webapi.Context
             base.OnModelCreating(modelBuilder);
 
         }
-        public DbSet<Elimination> Eliminations { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<Match> Matches { get; set; }
-        public DbSet<RoundRobin> RoundRobins { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<TournamentFormat> TournamentFormats { get; set; }
         public DbSet<MemberApplication> MemberApplications { get; set; }
         public DbSet<TournamentApplication> TournamentApplications { get; set; }
     }

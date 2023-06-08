@@ -54,7 +54,7 @@ export class TeamsComponent implements OnInit, DoCheck {
     }
 
     changeGameId(game: GetGameDTO | undefined): void {
-        if (game && game.id) {
+        if (game?.id) {
             this.gameId = parseInt(game.id);
             this.viewGame = game.name!;
         }

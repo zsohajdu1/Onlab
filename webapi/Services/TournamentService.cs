@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.SqlServer.Server;
 using webapi.Context;
 using webapi.DTO;
 using webapi.Model;
@@ -74,7 +75,6 @@ namespace webapi.Services
             var convertedTournament = mapper.Map<Tournament>(createTournamentDTO);
             convertedTournament.TournamentGame = dB.Games.FirstOrDefault(g => g.Id.Equals(createTournamentDTO.GameId));
             convertedTournament.Status = TournamentStatus.UPCOMING;
-            convertedTournament.Format = new Elimination();
             convertedTournament.Owner = dB.Users.FirstOrDefault(u => u.Id == userId);
             dB.Add(convertedTournament);
             dB.SaveChanges();
@@ -91,16 +91,11 @@ namespace webapi.Services
                 .Include(t => t.TournamentApplications)
                 .FirstOrDefault(t => t.Id == id);
 
-            var format = dB.TournamentFormats
-                .Include(f => f.Matches)
-                .Include(f => f.Tournament)
-                .FirstOrDefault(f => f.Tournament.Id == id);
-
             var matches = dB.Matches
-                .Include(m => m.TournamentOfMatch)
+                .Include(m => m.Tournament)
                 .Include(m => m.Teams)
                 .Include(m => m.Winner)
-                .Where(m => m.TournamentOfMatch.Id == id);
+                .Where(m => m.Tournament.Id == id);
 
             var convertedTournament = mapper.Map<TournamentDetailDTO>(tournament);
             convertedTournament.GameName = tournament.TournamentGame.Name;
@@ -117,28 +112,34 @@ namespace webapi.Services
                 convertedTournament.TeamsName.Add(team.Name);
             }
             convertedTournament.Matches = new List<MatchDTO>();
-            foreach (var match in matches)
+
+            if (matches != null)
             {
-                var convertedMatch = mapper.Map<MatchDTO>(match);
 
-                convertedMatch.TeamsId = new List<int>();
-                convertedMatch.TeamsName = new List<string>();
-                foreach (var team in match.Teams)
+                foreach (var match in matches)
                 {
-                    convertedMatch.TeamsId.Add(team.Id);
-                    convertedMatch.TeamsName.Add(team.Name);
-                }
-                if (match.Winner != null)
-                {
+                    var convertedMatch = mapper.Map<MatchDTO>(match);
 
-                    convertedMatch.WinnerName = match.Winner.Name;
-                    convertedMatch.WinnerId = match.Winner.Id;
+                    convertedMatch.TeamsId = new List<int>();
+                    convertedMatch.TeamsName = new List<string>();
+                    foreach (var team in match.Teams)
+                    {
+                        convertedMatch.TeamsId.Add(team.Id);
+                        convertedMatch.TeamsName.Add(team.Name);
+                    }
+                    if (match.Winner != null)
+                    {
+
+                        convertedMatch.WinnerName = match.Winner.Name;
+                        convertedMatch.WinnerId = match.Winner.Id;
+                    }
+                    else
+                    {
+                        convertedMatch.WinnerName = "";
+                    }
+                    convertedMatch.TournamentId = match.Tournament.Id;
+                    convertedTournament.Matches.Add(convertedMatch);
                 }
-                else
-                {
-                    convertedMatch.WinnerName = "";
-                }
-                convertedMatch.TournamentId = match.TournamentOfMatch.Id;
             }
             return convertedTournament;
         }
@@ -147,72 +148,74 @@ namespace webapi.Services
         {
             var tournament = dB.Tournaments
                 .Include(t => t.Teams)
-                .Include(t => t.Format)
+                .Include(t => t.Matches)
                 .FirstOrDefault(t => t.Id == id);
-
-            var format = dB.TournamentFormats
-                .Include(f => f.Matches)
-                .Include(f => f.Tournament)
-                .FirstOrDefault(f => f.Tournament.Id == id);
-            var teamsCount = tournament.Teams.Count;
-            double verticalDepthDouble = Math.Log(teamsCount, 2);
-            int verticalDepth = (int)Math.Ceiling(verticalDepthDouble);
-            if (teamsCount == tournament.MaxParticipants)
+            if (tournament != null)
             {
-                for (int i = 0; i < (teamsCount / 2 - 1); i++)
+                tournament.Matches = new List<Match>();
+                int teamsCount = 0;
+                if (tournament.Teams != null) teamsCount = tournament.Teams.Count;
+                int verticalDepth = (int)Math.Ceiling(Math.Log(teamsCount, 2));
+                if (teamsCount == tournament.MaxParticipants)
                 {
-                    Match match = new();
-                    match.Played = false;
-                    match.TournamentOfMatch = tournament;
-                    match.Teams = new List<Team>
-                    {
-                        tournament.Teams.ElementAt(i), tournament.Teams.ElementAt(teamsCount - i -1)
-                    };
-                    double horizontal = i / 2;
-                    match.HorizontalDepth = (int)Math.Floor(horizontal);
-                    match.VerticalDepth = verticalDepth - 1;
-                    format.Matches.Add(match);
-                    dB.Add(match);
-                }
-                for (int i = 0; i< verticalDepth - 1; i++)
-                {
-                    for (int j = 0; j < Math.Pow(i, 2); j++)
+                    for (int i = 0; i < (teamsCount / 2); i++)
                     {
                         Match match = new();
                         match.Played = false;
-                        match.TournamentOfMatch = tournament;
-                        match.Teams = new List<Team>();
-                        double horizontal = j;
-                        match.HorizontalDepth = (int)Math.Floor(horizontal);
-                        match.VerticalDepth = i;
-                        format.Matches.Add(match);
+                        match.Tournament = tournament;
+                        match.Teams = new List<Team>
+                        {
+                        tournament.Teams.ElementAt(i), tournament.Teams.ElementAt(teamsCount - i -1)
+                        };
+                        match.HorizontalDepth = i;
+                        match.VerticalDepth = verticalDepth - 1;
+                        tournament.Matches.Add(match);
                         dB.Add(match);
                     }
+                    for (int i = 0; i < verticalDepth - 1; i++)
+                    {
+                        for (int j = 0; j < Math.Pow(2, i); j++)
+                        {
+                            Match match = new();
+                            match.Played = false;
+                            match.Tournament = tournament;
+                            match.Teams = new List<Team>();
+                            double horizontal = j;
+                            match.HorizontalDepth = (int)Math.Floor(horizontal);
+                            match.VerticalDepth = i;
+                            tournament.Matches.Add(match);
+                            dB.Add(match);
+                        }
+                    }
+                    tournament.Status = TournamentStatus.INPROGRESS;
+                    dB.Update(tournament);
+                    dB.SaveChanges();
                 }
-                tournament.Status = TournamentStatus.INPROGRESS;
-                dB.Update(tournament);
-                dB.Update(format);
-                dB.SaveChanges();
-            }
-            else
-            {
-                //possible new feature
-                throw new NotImplementedException();
+
+                else
+                {
+                    //possible new feature
+                    throw new NotImplementedException();
+                }
+
             }
         }
         public void MatchWinner (int matchId, int winnerId)
         {
             var match = dB.Matches
-                .Include(m => m.TournamentOfMatch)
+                .Include(m => m.Tournament)
+                .Include(m => m.Teams)
                 .FirstOrDefault(m => m.Id == matchId);
             var winner = dB.Teams
                 .FirstOrDefault(t => t.Id == winnerId);
-            var tournament = dB.Tournaments
-                .Include(t => t.Format)
-                .Include(t => t.Format.Matches)
-                .FirstOrDefault(t => t.Id == match.TournamentOfMatch.Id);
-            if (!match.Played)
+            if (match != null
+                && !match.Played
+                && match.Teams != null
+                && match.Teams.Count == 2)
             {
+                var tournament = dB.Tournaments
+                    .Include(t => t.Matches)
+                    .FirstOrDefault(t => t.Id == match.Tournament.Id);
                 match.Winner = winner;
                 match.Played = true;
                 if (match.VerticalDepth == 0)
@@ -225,11 +228,11 @@ namespace webapi.Services
                     var newHorizontalDepth = (int)Math.Floor(x);
                     var newVerticalDepth = match.VerticalDepth - 1;
                     var newMatch = dB.Matches
-                        .Include(m => m.TournamentOfMatch)
+                        .Include(m => m.Tournament)
                         .Include(m => m.Teams)
-                        .FirstOrDefault(m => m.TournamentOfMatch.Id == tournament.Id
-                                           && m.VerticalDepth == newVerticalDepth
-                                           && m.HorizontalDepth == newHorizontalDepth);
+                        .FirstOrDefault(m => m.Tournament.Id == tournament.Id
+                                            && m.VerticalDepth == newVerticalDepth
+                                            && m.HorizontalDepth == newHorizontalDepth);
                     if (newMatch != null)
                     {
                         newMatch.Teams.Add(winner);
@@ -238,8 +241,8 @@ namespace webapi.Services
                 }
                 dB.Update(match);
                 dB.SaveChanges();
-
             }
+            
         }
         public void ApplyTournament(int teamId, int tournamentId)
         {
@@ -254,7 +257,10 @@ namespace webapi.Services
                 .Include(ta => ta.Tournament)
                 .Include(ta => ta.Team)
                 .FirstOrDefault(ta => ta.Team.Id == teamId && ta.Tournament.Id == tournamentId && !ta.IsCompleted);
-            if (!tournament.Teams.Contains(appliantTeam) && tournament.Teams.Count != tournament.MaxParticipants && possibleApplication == null)
+            if (tournament != null
+                && !tournament.Teams.Contains(appliantTeam)
+                && tournament.Teams.Count != tournament.MaxParticipants
+                && possibleApplication == null)
             {
                 TournamentApplication application = new();
                 application.Team = appliantTeam;
@@ -280,7 +286,8 @@ namespace webapi.Services
                 .Include(t => t.Owner)
                 .FirstOrDefault(t => t.Id == tournamentId);
             var acceptor = dB.Users.FirstOrDefault(u => u.Id == userId);
-            var isValid = acceptor.Id == tournament.Owner.Id
+            var isValid = tournament != null 
+                && acceptor.Id == tournament.Owner.Id
                 && tournament.Teams.Count != tournament.MaxParticipants
                 && !tournament.Teams.Contains(appliantTeam)
                 && !application.IsCompleted;
@@ -305,7 +312,7 @@ namespace webapi.Services
                 .Include(t => t.Teams)
                 .Include(t => t.Owner)
                 .FirstOrDefault(t => t.Id == tournamentId);
-            if (tournament.Owner.Id == userId) application.IsCompleted = true;
+            if (tournament != null && application != null && tournament.Owner.Id == userId) application.IsCompleted = true;
             dB.Update(application);
             dB.SaveChanges();
         }
@@ -333,7 +340,9 @@ namespace webapi.Services
         {
             var team = dB.Teams.FirstOrDefault(t => t.Id == teamId);
             var tournament = dB.Tournaments.Include(t=> t.Teams).FirstOrDefault(t => t.Id == tournamentId);
-            if (tournament.Teams.Contains(team))
+            if (tournament != null
+                && team != null
+                && tournament.Teams.Contains(team))
             {
                 tournament.Teams.Remove(team);
                 dB.Update(tournament);

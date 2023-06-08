@@ -24,17 +24,17 @@
             </div>
             <div style="margin-left: 2rem" class="row" *ngFor="let team of tournament.teamsName; let i = index">
                 {{team}}
-                <button *ngIf="tournament.isOwner" (click)="remove(tournament.teamsId![i])" type="button" class="btn btn-danger col-1"
-                    style="margin-left: 2rem">KICK</button>
+                <button *ngIf="tournament.isOwner" (click)="remove(tournament.teamsId![i])" type="button"
+                    class="btn btn-danger col-1" style="margin-left: 2rem">KICK</button>
             </div>
             <div class="fs-5">
                 Pending
             </div>
             <div style="margin-left: 2rem" class="row" *ngFor="let team of applications; let i = index">
                 {{team.teamName}}
-                <button *ngIf="tournament.isOwner" (click)="accept(team.id!)" type="button" class="btn btn-success col-1"
-                    style="margin-left: 2rem">ACCEPT</button>
-                <button *ngIf="tournament.isOwner" (click)="deny(team.id!)" type="button" class="btn btn-danger col-1"
+                <button *ngIf="tournament.isOwner" (click)="accept(team.id!)" type="button"
+                    class="btn btn-success col-2" style="margin-left: 2rem">ACCEPT</button>
+                <button *ngIf="tournament.isOwner" (click)="deny(team.id!)" type="button" class="btn btn-danger col-2"
                     style="margin-left: 2rem">DENY</button>
             </div>
         </div>
@@ -43,7 +43,32 @@
                 Settings
             </div>
             <div *ngIf="tournament.isOwner">
-
+                <div class="fs-5">
+                    Change name ({{tournament.name}})
+                </div>
+                <div class="col-3">
+                    <input [(ngModel)]="newName" class="form-control" placeholder="Change name" id="teamName">
+                </div>
+                <div class="fs-5">
+                    Change max participants ({{tournament.maxParticipants}})
+                </div>
+                <div class="col-3">
+                    <input [(ngModel)]="newParticipants" type="number" class="form-control" placeholder="Change name"
+                        id="teamName">
+                </div>
+                <div>
+                    <button (click)="save()" class="btn btn-success" type="button">
+                        SAVE CHANGES
+                    </button>
+                </div>
+                <div *ngIf="alert" class="col-4 alert alert-danger" role="alert">
+                    {{alertMessage}}
+                </div>
+                <div *ngIf="tournament.teamsName!.length == tournament.maxParticipants">
+                    <button (click)="start()" class="btn btn-primary" type="button">
+                        START TOURNAMENT
+                    </button>
+                </div>
             </div>
             <div class="fs-5" *ngIf="!tournament.isOwner">
                 <div>Max participants: {{tournament.maxParticipants}}</div>
@@ -51,6 +76,73 @@
                 <div>Join with:</div>
                 <div class="text-info" (click)="join(team.id!)" *ngFor="let team of teams">
                     {{team.name}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="tournament.status == 1 || tournament.status == 2">
+        <div class="col-6">
+            <div class="fs-4">
+                Bracket
+            </div>
+            <div class="row">
+
+                <div class="col-4">
+                    <div *ngFor="let match of tournament.matches" class="mb-5">
+                        <div *ngIf="match.teamsName != null && match.verticalDepth == 1">
+                            <div>
+                                {{match.teamsName![0]}}
+                            </div>
+                            <div>
+                                {{match.teamsName![1]}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div *ngFor="let match of tournament.matches" class="mt-5">
+                        <div *ngIf="match.teamsName != null && match.verticalDepth == 0">
+                            <div>
+                                {{match.teamsName![0]}}
+                            </div>
+                            <div>
+                                {{match.teamsName![1]}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="fs-4">
+                Matches
+            </div>
+            <div class="fs-5">
+                Upcoming
+            </div>
+            <div *ngFor="let match of tournament.matches">
+                <div *ngIf="match.teamsName != null && match.teamsName.length == 2 && !match.played">
+                    <div class="col-4">
+
+                        {{match.teamsName![0]}} - {{match.teamsName![1]}}
+                    </div>
+                    <div *ngIf="tournament.isOwner" class="row">
+                        <div class="col-2">
+                            Select Winner:
+                        </div>
+                        <div class="col-3" *ngFor="let team of match.teamsName; let i = index">
+                            <button (click)="winner(match.id!, match.teamsId![i])" type="button" class="btn btn-primary"
+                                style="margin-left: 2rem">{{team}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fs-5">
+                Completed
+            </div>
+            <div *ngFor="let match of tournament.matches">
+                <div *ngIf="match.teamsName != null && match.teamsName.length == 2 && match.played">
+                    {{match.teamsName![0]}} - {{match.teamsName![1]}} Winner: {{match.winnerName}}
                 </div>
             </div>
         </div>

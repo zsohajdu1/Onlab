@@ -17,16 +17,70 @@
                 [routerLink]="['/authentication/register']">Register</button>
         </div>
         <div class="row col-6" style="margin-top: 5rem;">
-            <button type="button" class="btn btn-primary btn-lg"
-                [routerLink]="['/authentication/login']">Login</button>
+            <button type="button" class="btn btn-primary btn-lg" [routerLink]="['/authentication/login']">Login</button>
         </div>
     </div>
     <div class="col" *ngIf="(isAuthenticated | async)">
         <div class="fs-3">
             My Teams
         </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item row mb-1" [routerLink]="['/teams', TeamListDTO.id]"
+                *ngFor="let TeamListDTO of teams">
+                <div class="row mb-1">
+                    <div class="col-2">
+                        <img class="" id="gameIcon" alt="avatar1" style=" max-width: 100%;
+          height: auto;" src="{{TeamListDTO.gameIcon}}" />
+                    </div>
+                    <div class="col-2">
+                        <div class="fs-6">{{TeamListDTO.name}}</div>
+                    </div>
+                    <div class="col-2" *ngIf="TeamListDTO.status == 0">
+                        <div class="fs-6">LFT</div>
+                    </div>
+                    <div class="col-2" *ngIf="TeamListDTO.status == 1">
+                        <div class="fs-6">FULL</div>
+                    </div>
+                    <div class="col-2">
+                        <div class="fs-6">
+                            <div class="fs-6">{{TeamListDTO.memberCount}} / {{TeamListDTO.gameMember}}  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
         <div class="fs-3">
             My Tournaments
         </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item row mb-1" [routerLink]="['/tournaments', TournamentListDTO.id]"
+                *ngFor="let TournamentListDTO of tournaments">
+                <div class="row mb-1">
+                    <div class="col-2">
+                        <img class="" id="gameIcon" alt="avatar1" style=" max-width: 100%;
+          height: auto;" src="{{TournamentListDTO.gameIcon}}" />
+                    </div>
+                    <div class="col-2">
+                        <div class="fs-6">{{TournamentListDTO.name}}</div>
+                    </div>
+                    <div class="col-2" *ngIf="TournamentListDTO.status == 0">
+                        <div class="fs-6">Upcoming</div>
+                    </div>
+                    <div class="col-2" *ngIf="TournamentListDTO.status == 1">
+                        <div class="fs-6">In Progress</div>
+                    </div>
+                    <div class="col-2" *ngIf="TournamentListDTO.status == 2">
+                        <div class="fs-6">Completed</div>
+                    </div>
+                    <div class="col-2">
+                        <div class="fs-6">
+                            <div class="fs-6">{{TournamentListDTO.participants}} / {{TournamentListDTO.maxParticipants}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>

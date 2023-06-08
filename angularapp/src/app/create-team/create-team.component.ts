@@ -22,7 +22,7 @@ export class CreateTeamComponent {
     }
 
     changeGameId(game: GetGameDTO | undefined): void {
-        if (game && game.name) {
+        if (game?.name) {
             this.selectedGame = game;
             this.viewGame = game.name;
         }
